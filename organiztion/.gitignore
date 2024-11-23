@@ -1,0 +1,39 @@
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Django
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.swp
+*.swo
+*.bak
+
+# Virtual environment
+venv/
+env/
+.venv/
+ENV/
+.ENV/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# PyCharm
+*.idea/
+
+# VS Code
+.vscode/
+
+# Django Secret Key
+*.env
+
+# Static files
+/static/

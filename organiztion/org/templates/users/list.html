@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Styling for the container */
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Header styling */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* User list styling */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;  /* Added more spacing between user entries */
+        }
+
+        .user-list p {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        /* Button styling */
+        button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Assign role button */
+        .assign-role-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .assign-role-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add user button */
+        .add-user-button {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .add-user-button:hover {
+            background-color: #218838;
+        }
+
+        /* Delete button */
+        .delete-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Logout button */
+        .logout-button {
+            background-color: #dc3545;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+
+        /* Redirect button */
+        .redirect-button {
+            background-color: #17a2b8;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .redirect-button:hover {
+            background-color: #117a8b;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>User List</h2>
+
+        <div class="user-list">
+            {% for user in users %}
+                {% if user != request.user %}
+                    <p>
+                        <span class="user-info">
+                            {{ user.username }} - {{ user.email }}
+                        </span>
+
+                        <!-- Display roles on a new line -->
+                        <br>
+                        <strong>Roles:</strong>
+                        <span class="user-roles">
+                            {% for role in user.roles.all %}
+                                {{ role.name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}
+                                No roles assigned.
+                            {% endfor %}
+                        </span>
+
+                        <!-- Assign Role Button -->
+                        <form method="GET" action="{% url 'assign_role' user.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="assign-role-button">Assign Role</button>
+                        </form>
+
+                        <!-- Delete User Button -->
+                        <form method="POST" action="{% url 'delete_user' user.id %}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-button">Delete User</button>
+                        </form>
+                    </p>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Add User Button, ensuring not adding the logged-in user -->
+        {% if user.is_superuser or user.has_permission_to_add_users %}
+            <form method="GET" action="{% url 'user_create' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="add-user-button">Add User</button>
+            </form>
+        {% endif %}
+        
+        <a href="{% url 'organization_list' %}">
+            <button class="redirect-button">Go to Organizations</button>
+        </a>
+
+        <!-- Logout Button -->
+        <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+
+</body>
+</html>

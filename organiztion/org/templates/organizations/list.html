@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organization List</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+        }
+
+        /* Styling for the header and main content */
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Organization item styling */
+        .organization-item {
+            margin: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Button styling */
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Specific button colors */
+        .edit-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+
+        .view-button {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .view-button:hover {
+            background-color: #388e3c;
+        }
+
+        .add-button {
+            background-color: #28a745;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .add-button:hover {
+            background-color: #218838;
+        }
+
+        .logout-button {
+            background-color: #dc3545;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Organizations</h1>
+
+    {% for organization in organizations %}
+        <div class="organization-item">
+            <p>
+                <strong>{{ organization.name }}</strong> - {{ organization.address }}
+            </p>
+
+            <!-- Edit button -->
+            <form method="GET" action="{% url 'organization_edit' organization.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="edit-button">Edit</button>
+            </form>
+
+            <!-- Delete button with confirmation -->
+            <form method="POST" action="{% url 'organization_delete' organization.id %}" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this organization?')">
+                {% csrf_token %}
+                <button type="submit" class="delete-button">Delete</button>
+            </form>
+
+            <!-- List users associated with this organization -->
+            {% if organization.users.all %}
+                <ul>
+                    {% for user in organization.users.all %}
+                        <li>
+                            <form method="GET" action="{% url 'user_page' user.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="view-button">{{ user.username }}</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No users associated with this organization.</p>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <!-- Add Organization button -->
+    <form method="GET" action="{% url 'organization_create' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="add-button">Add Organization</button>
+    </form>
+
+    <a href="{% url 'user_list' %}">
+        <button class="redirect-button">Go to Users</button>
+    </a>
+
+    <!-- Logout button -->
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
+
+</body>
+</html>

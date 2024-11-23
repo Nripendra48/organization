@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Role to {{ user.username }}</title>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Styling for the container */
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Header styling */
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .user-info {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        /* Role selection styling */
+        .roles-list {
+            margin-bottom: 20px;
+        }
+
+        .role-checkbox {
+            margin-right: 10px;
+        }
+
+        /* Button styling */
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Submit button */
+        .submit-button {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Cancel button */
+        .cancel-button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .cancel-button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Assign Roles to {{ user.username }}</h2>
+
+        <!-- Display user information -->
+        <div class="user-info">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Organization:</strong> {{ user.organization.name }}</p> <!-- Adjust according to your model -->
+        </div>
+
+        <!-- Form to assign roles -->
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="roles-list">
+                <h3>Select Roles</h3>
+                {% for role in roles %}
+                    <label class="role-checkbox">
+                        <input type="checkbox" name="roles" value="{{ role.id }}" 
+                            {% if role in user.roles.all %}checked{% endif %}>
+                        {{ role.name }}
+                    </label><br>
+                {% endfor %}
+            </div>
+
+            <!-- Submit button to assign roles -->
+            <button type="submit" class="submit-button">Assign Role</button>
+        </form>
+
+        <!-- Cancel button to return to the user list -->
+        <a href="{% url 'user_list' %}">
+            <button class="cancel-button">Cancel</button>
+        </a>
+    </div>
+
+</body>
+</html>
